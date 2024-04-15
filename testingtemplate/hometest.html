@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <img src="../assets/logo.png" alt="logo" width="125px">
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="">Home</a></li>
+                        <li><a href="">Products</a></li>
+                        <li><a href="">About</a></li>
+                        <li><a href="">Contact</a></li>
+                        <li><a href="">Account</a></li>
+                    </ul>
+                </nav>
+                <img src="../assets/shopping_cart.png" alt="cart" width="30px" height="30px">
+            </div>
+        </div>
+    </div>
+
+    <div class ="row">
+        <div class="col-2">
+            <h1>Handcrafted DnD Supplies<br> Special for You</h1>
+            <p>All products are made by hand, nothing is sourced</p>
+            <a href="" class="btn">Explore Now &#8594;</a>
+        </div>
+        <div class="col-2">
+            <img src="../assets/workplace.png" alt="a big image of my workplace">
+        </div>
+    </div>
+
+    <!-- Featured Categories -->
+    <div class="categories">
+        <div class="small-container">
+            <div class="row">
+                <div class="col-3">
+                    <img src="images/category-1.png" alt="category-1">
+                </div>
+                <div class="col-3">
+                    <img src="images/category-2.png" alt="category-2">
+                </div>
+                <div class="col-3">
+                    <img src="images/category-3.png" alt="category-3">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Products -->
+    <div class="small-container">
+        <h2 class="title">Featured Products</h2>
+        <div class="row">
+            <div class="col-4">
+                <img src="images/product-1.jpg" alt="product-1">
+                <h4>Product Name</h4>
+                <p>$50.00</p>
+                <div class="rating">
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star-o"></i>
+                </div>
+            </div>
+            <div class="col-4">
+                <img src="images/product-2.jpg" alt="product-2">
+                <h4>Product Name</h4>
+                <div class="rating">
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star-o"></i>
+                </div>
+                <p>$50.00</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock %}

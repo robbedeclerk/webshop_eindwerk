@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<body>
+    <h1>Edit Profile</h1>
+    <form action="{{ url_for('edit_profile') }}" method="post">
+        {{ form.hidden_tag() }}
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{ current_user.email }}">
+        </div>
+        <div>
+            <label for="country">Country:</label>
+            <input type="text" id="country" name="country" value="{{ current_user.country }}">
+        </div>
+        <div>
+            <label for="street">Street:</label>
+            <input type="text" id="street" name="street" value="{{ current_user.street }}">
+        </div>
+        <div>
+            <label for="postal_number">Postal Number:</label>
+            <input type="text" id="postal_number" name="postal_number" value="{{ current_user.postal_number }}">
+        </div>
+        <div>
+            <label for="house_number">House Number:</label>
+            <input type="text" id="house_number" name="house_number" value="{{ current_user.house_number }}">
+        </div>
+        <div>
+            <label for="bus_number">Bus Number:</label>
+            <input type="text" id="bus_number" name="bus_number" value="{{ current_user.bus_number }}">
+        </div>
+        <div>
+            <input type="submit" value="Update Profile">
+        </div>
+    </form>
+</body>
+{% endblock %}

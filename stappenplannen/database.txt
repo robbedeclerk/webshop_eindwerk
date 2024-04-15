@@ -1,0 +1,8 @@
+als er geen migration folder is eerst : flask db init
+
+
+flask db migrate -m "users table"   tussen de "" staat de naam van de table en dan table 
+
+
+flask db upgrade
+

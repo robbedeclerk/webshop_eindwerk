@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+    <head>
+      <title>dnd supplies</title>
+    </head>
+    <body>
+        <div>
+            dnd supplies:
+            <a href="{{ url_for('index') }}">Home</a>
+            {% if current_user.is_anonymous %}
+            <a href="{{ url_for('login') }}">Login</a>
+            {% else %}
+            <a href="{{ url_for('profile') }}">Profile</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% endif %}
+        </div>
+        <div>
+            tijdelijke links
+            <a href="{{ url_for('add_data') }}">shop data</a>
+            <a href="{{url_for('delete_data')}}">delete data</a>
+        </div>
+        {% block content %}{% endblock %}
+    </body>
+</html>

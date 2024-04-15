@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+{% for category in categories %}
+<div class="category">
+    <h2 class="category-title">{{ category.name }}</h2>
+    <div class="product-grid">
+        {% for product in products %}
+        {% if product.category_id == category.id %}
+        <div class="product-item">
+            <h3><a href="{{ url_for('product', product_id=product.id) }}">{{ product.name }}</a></h3>
+            <p>{{ product.description }}</p>
+            <p>Price: €{{ product.price }}</p>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
