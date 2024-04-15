@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField,DecimalField,SelectField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo,NumberRange
 from wtforms.fields import DecimalField
 import sqlalchemy as sa
 from app import db
@@ -67,3 +67,7 @@ class AddProductForm(FlaskForm):
     price = DecimalField('Price', validators=[DataRequired()])
     category = SelectField('Category', coerce=int, validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+class AddToCartForm(FlaskForm):
+    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1, message="Quantity must be at least 1")])
+    submit = SubmitField('Add to Cart')

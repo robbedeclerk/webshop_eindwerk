@@ -1,9 +1,9 @@
-from flask import render_template,flash,redirect,url_for,request
-from app import app,db
-from app.forms import LoginForm,RegistrationForm,EditProfileForm,AddCategoryForm,AddProductForm
-from flask_login import current_user, login_user,logout_user,login_required
+from flask import render_template, flash, redirect, url_for, request
+from app import app, db
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, AddCategoryForm, AddProductForm
+from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
-from app.models import User,Product,Category
+from app.models import User, Product, Category, CartItem
 from urllib.parse import urlsplit
 
 @app.route('/')
@@ -160,3 +160,56 @@ def delete_product(product_id):
 def product(product_id):
     product = Product.query.get_or_404(product_id)
     return render_template('product.html', product=product)
+
+@app.route('/add_to_cart/<int:product_id>', methods=['GET', 'POST'])
+def add_to_cart(product_id):
+    product = Product.query.get_or_404(product_id)
+    if not product:
+        flash('Product not found.', 'error')
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        if current_user.is_authenticated:
+            cart_item = CartItem(user_id=current_user.id, product_id=product_id)
+            db.session.add(cart_item)
+            db.session.commit()
+            flash('Item added to cart successfully!')
+        else:
+            flash('You need to log in to add items to the cart.', 'error')
+            return redirect(url_for('login'))
+        return redirect(url_for('index'))
+    else:
+        # Handle GET request if needed
+        return redirect(url_for('index'))
+    
+    return redirect(url_for('index'))
+
+@app.route('/cart')
+@login_required
+def view_cart():
+    cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
+    return render_template('cart.html', cart_items=cart_items)
+
+@app.route('/remove_from_cart/<int:cart_item_id>', methods=['POST'])
+@login_required
+def remove_from_cart(cart_item_id):
+    cart_item = CartItem.query.get_or_404(cart_item_id)
+    if cart_item:
+        db.session.delete(cart_item)
+        db.session.commit()
+        flash('Item removed from cart successfully!')
+    return redirect(url_for('view_cart'))
+
+@app.route('/update_cart/<int:cart_item_id>', methods=['POST'])
+@login_required
+def update_cart(cart_item_id):
+    cart_item = CartItem.query.get_or_404(cart_item_id)
+    if cart_item:
+        new_quantity = request.form.get('quantity')
+        if new_quantity:
+            cart_item.quantity = int(new_quantity)
+            db.session.commit()
+            flash('Cart item updated successfully!')
+        else:
+            flash('Invalid quantity.')
+    return redirect(url_for('view_cart'))

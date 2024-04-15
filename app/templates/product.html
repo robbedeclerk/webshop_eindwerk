@@ -4,6 +4,12 @@
     <h1>{{ product.name }}</h1>
     <p>Description: {{ product.description }}</p>
     <p>Price: €{{ product.price }}</p>
-    <!-- You can display additional product details here -->
+
+    <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="post">
+        <label for="quantity">Quantity:</label>
+        <input type="number" name="quantity" id="quantity" value="1" min="1">
+        <input type="submit" value="Add to Cart">
+    </form>
+    
 </body>
 {% endblock %}
