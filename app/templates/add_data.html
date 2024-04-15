@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<body>
+    <h1>Add Category</h1>
+    <form method="POST" action="{{ url_for('add_category') }}">
+        {{ category_form.hidden_tag() }}  <!-- Dit is nodig voor CSRF-bescherming -->
+        <p>{{ category_form.name.label }}: {{ category_form.name }}</p>
+        <p>{{ category_form.submit }}</p>
+    </form>
+
+    <h1>Add Product</h1>
+    <form method="POST" action="{{ url_for('add_product') }}">
+        {{ product_form.hidden_tag() }} 
+        <p>{{ product_form.name.label }}: {{ product_form.name }}</p>
+        <p>{{ product_form.description.label }}: {{ product_form.description }}</p>
+        <p>{{ product_form.price.label }}: {{ product_form.price }}</p>
+        <select name="category">
+            <option value="" disabled selected>Selecteer een categorie</option> <!-- Standaard leeg en niet-selecteerbaar -->
+            {% for category_id, category_name in category_choices %}
+                <option value="{{ category_id }}">{{ category_name }}</option>
+            {% endfor %}
+        </select>        
+        <p>{{ product_form.submit }}</p>
+    </form>
+</body>
+{% endblock %}

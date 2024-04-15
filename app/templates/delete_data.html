@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<body>
+    <h1>Delete Category and Product</h1>
+    
+    <h2>Delete Categories:</h2>
+    {% for category in categories %}
+    <form method="post" action="{{ url_for('delete_category', category_id=category.id) }}">
+        <p>Are you sure you want to delete the category "{{ category.name }}"?</p>
+        <button type="submit">Delete</button>
+    </form>
+    {% endfor %}
+    
+    <h2>Delete Products:</h2>
+    {% for product in products %}
+    <form method="post" action="{{ url_for('delete_product', product_id=product.id) }}">
+        <p>Are you sure you want to delete the product "{{ product.name }}"?</p>
+        <button type="submit">Delete</button>
+    </form>
+    {% endfor %}
+</body>
+{% endblock %}
