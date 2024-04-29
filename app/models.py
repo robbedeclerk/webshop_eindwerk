@@ -15,6 +15,7 @@ class User(UserMixin,db.Model):
     postal_number: so.Mapped[str] = so.mapped_column(sa.String(20))
     house_number: so.Mapped[str] = so.mapped_column(sa.String(20))
     bus_number: so.Mapped[Optional[str]] = so.mapped_column(sa.String(20))
+    admin_rights: so.Mapped[bool] = so.mapped_column(sa.Boolean, default=False)
 
 
     def __repr__(self):

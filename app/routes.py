@@ -1,10 +1,20 @@
 from flask import render_template, flash, redirect, url_for, request
+from functools import wraps
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, AddCategoryForm, AddProductForm
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 from app.models import User, Product, Category, CartItem
 from urllib.parse import urlsplit
+
+def admin_required(func):
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.admin_rights:
+            # Redirect to a suitable page when admin rights are required
+            return redirect(url_for('error_page'))
+        return func(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 @app.route('/index')
@@ -94,6 +104,8 @@ def edit_profile():
     return render_template('edit_profile.html', title='Edit Profile', form=form, user=current_user)
 
 @app.route('/add_data', methods=['GET'])
+@login_required
+@admin_required
 def add_data():
     category_choices = [(c.id, c.name) for c in Category.query.all()]
     product_form = AddProductForm()
@@ -102,6 +114,8 @@ def add_data():
     return render_template('add_data.html', title='Add Data', product_form=product_form, category_form=category_form, category_choices=category_choices)
 
 @app.route('/add_category', methods=['POST'])
+@login_required
+@admin_required
 def add_category():
     category_form = AddCategoryForm()
     if category_form.validate_on_submit():
@@ -113,6 +127,8 @@ def add_category():
     return render_template('add_data.html', title='Add Data', category_form=category_form,)
 
 @app.route('/add_product', methods=['POST'])
+@login_required
+@admin_required
 def add_product():
     category_choices = [(c.id, c.name) for c in Category.query.all()]
     product_form = AddProductForm()
@@ -131,6 +147,8 @@ def add_product():
     return render_template('add_data.html', title='Add Data', product_form=product_form, category_choices=category_choices)
 
 @app.route('/delete_data')
+@login_required
+@admin_required
 def delete_data():
     categories = Category.query.all()
     products = Product.query.all()
@@ -139,6 +157,8 @@ def delete_data():
 
 
 @app.route('/delete_category/<int:category_id>', methods=['POST'])
+@login_required
+@admin_required
 def delete_category(category_id):
     category = Category.query.get_or_404(category_id)
     db.session.delete(category)
@@ -148,6 +168,8 @@ def delete_category(category_id):
     return redirect(url_for('delete_data'))
 
 @app.route('/delete_product/<int:product_id>', methods=['POST'])
+@login_required
+@admin_required
 def delete_product(product_id):
     product = Product.query.get_or_404(product_id)
     db.session.delete(product)
