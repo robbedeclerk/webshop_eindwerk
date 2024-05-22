@@ -41,6 +41,11 @@ class Product(db.Model):
     description = db.Column(db.Text, nullable=False)
     price = db.Column(db.Float, nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    image_filename = db.Column(db.String(255))  # Voeg dit attribuut toe
+
+    def __repr__(self):
+        return f'<Product {self.name}>'
+
 
 class CartItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)

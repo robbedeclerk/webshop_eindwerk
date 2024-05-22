@@ -9,17 +9,13 @@
     </form>
 
     <h1>Add Product</h1>
-    <form method="POST" action="{{ url_for('add_product') }}">
+    <form method="POST" action="{{ url_for('add_product') }}" enctype="multipart/form-data">
         {{ product_form.hidden_tag() }} 
         <p>{{ product_form.name.label }}: {{ product_form.name }}</p>
         <p>{{ product_form.description.label }}: {{ product_form.description }}</p>
         <p>{{ product_form.price.label }}: {{ product_form.price }}</p>
-        <select name="category">
-            <option value="" disabled selected>Selecteer een categorie</option> <!-- Standaard leeg en niet-selecteerbaar -->
-            {% for category_id, category_name in category_choices %}
-                <option value="{{ category_id }}">{{ category_name }}</option>
-            {% endfor %}
-        </select>        
+        <p>{{ product_form.category.label }}: {{ product_form.category }}</p>
+        <p>{{ product_form.image.label }}: {{ product_form.image }}</p> <!-- Toegevoegd voor het uploaden van afbeeldingen -->
         <p>{{ product_form.submit }}</p>
     </form>
 </body>

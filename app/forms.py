@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField,DecimalField,SelectField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo,NumberRange
 from wtforms.fields import DecimalField
@@ -66,8 +67,18 @@ class AddProductForm(FlaskForm):
     description = StringField('Description', validators=[DataRequired()])
     price = DecimalField('Price', validators=[DataRequired()])
     category = SelectField('Category', coerce=int, validators=[DataRequired()])
+    image = FileField('Product Image', validators=[FileAllowed(['jpg', 'png', 'jpeg'])])
     submit = SubmitField('Submit')
 
 class AddToCartForm(FlaskForm):
     quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1, message="Quantity must be at least 1")])
     submit = SubmitField('Add to Cart')
+
+
+class ResetPasswordForm(FlaskForm):
+    old_password = PasswordField('Old Password', validators=[DataRequired()])
+    new_password = PasswordField('New Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm New Password', validators=[
+        DataRequired(), EqualTo('new_password', message='Passwords must match')
+    ])
+    submit = SubmitField('Reset Password')

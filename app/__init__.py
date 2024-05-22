@@ -6,6 +6,7 @@ from flask_login import LoginManager
 
 app = Flask(__name__)
 app.config.from_object(Config)
+app.config['UPLOAD_FOLDER'] = 'app/static/assets/images'  # Voeg de UPLOAD_FOLDER-variabele toe
 db= SQLAlchemy(app)
 migrate = Migrate(app,db)
 login = LoginManager(app)

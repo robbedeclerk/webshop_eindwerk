@@ -132,16 +132,23 @@ body {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     padding: 10px;
-    text-align: center;
+    display: flex; /* Gebruik flexbox om de afbeelding en productinformatie naast elkaar te plaatsen */
+    align-items: center; /* Centreer items verticaal in de flex-container */
     box-sizing: border-box;
 }
 
+.product-item img {
+    max-width: 30%;
+    height: auto;
+    margin-right: 10px; /* Ruimte tussen de afbeelding en de productinformatie */
+}
+
 .product-item h3 {
-    margin-top: 0;
+    margin: 0; /* Reset de standaardmarges */
 }
 
 .product-item p {
-    margin-bottom: 10px;
+    margin-bottom: 5px; /* Ruimte tussen de alinea's */
 }
 
 .product-item a {
@@ -152,6 +159,8 @@ body {
 .product-item a:hover {
     text-decoration: underline;
 }
+
+
 
 
 /* Stijl voor de profielpagina */
@@ -361,3 +370,227 @@ body {
     padding: 10px; /* Binnenruimte */
     border: 1px solid #ddd; /* Randkleur */
 }
+
+/* Stijl voor de shopping cart pagina */
+
+
+h1 {
+    color: #cf3636; /* Kleur van de titel */
+    text-align: center; /* Centreren van de titel */
+    margin-bottom: 20px; /* Ruimte onder de titel */
+}
+
+table {
+    width: 100%; /* Volledige breedte van de tabel */
+    border-collapse: collapse; /* Samenvoegen van de celranden */
+    margin-bottom: 20px; /* Ruimte onder de tabel */
+}
+
+thead th {
+    background-color: #cf3636; /* Achtergrondkleur van de kopjes */
+    color: #fff; /* Tekstkleur van de kopjes */
+    padding: 10px; /* Binnenruimte van de kopjes */
+    text-align: left; /* Links uitlijnen van de kopjes */
+}
+
+tbody td {
+    border: 1px solid #ddd; /* Rand rond de cel */
+    padding: 10px; /* Binnenruimte van de cel */
+}
+
+tbody td:first-child,
+tbody td:last-child {
+    width: 20%; /* Breedte van de eerste en laatste kolom */
+}
+
+tbody td:nth-child(3),
+tbody td:nth-child(5) {
+    width: 15%; /* Breedte van de derde en vijfde kolom */
+}
+
+tbody td form {
+    display: inline; /* In-line weergave van het formulier */
+}
+
+tbody td input[type="number"] {
+    width: 50px; /* Breedte van het invoerveld voor het aantal */
+}
+
+tbody td input[type="submit"] {
+    padding: 5px 10px; /* Binnenruimte van de knop */
+    background-color: #cf3636; /* Achtergrondkleur van de knop */
+    color: #fff; /* Tekstkleur van de knop */
+    border: none; /* Geen rand rond de knop */
+    cursor: pointer; /* Muisaanwijzer wijzigen naar een handje */
+}
+
+tbody td input[type="submit"]:hover {
+    background-color: #a42e2e; /* Achtergrondkleur van de knop bij hover */
+}
+
+
+
+/* Stijl voor de productpagina */
+
+
+h1 {
+    color: #cf3636; /* Kleur van de titel */
+    text-align: center; /* Centreren van de titel */
+    margin-bottom: 20px; /* Ruimte onder de titel */
+}
+
+p {
+    margin-bottom: 10px; /* Ruimte onder de paragrafen */
+}
+
+form {
+    text-align: center; /* Centreren van het formulier */
+}
+
+label {
+    display: block; /* Zorgt ervoor dat elk label op een nieuwe regel staat */
+    margin-bottom: 5px; /* Ruimte onder elk label */
+}
+
+input[type="number"] {
+    width: 50px; /* Breedte van het invoerveld voor het aantal */
+}
+
+input[type="submit"] {
+    padding: 5px 10px; /* Binnenruimte van de knop */
+    background-color: #cf3636; /* Achtergrondkleur van de knop */
+    color: #fff; /* Tekstkleur van de knop */
+    border: none; /* Geen rand rond de knop */
+    cursor: pointer; /* Muisaanwijzer wijzigen naar een handje */
+}
+
+input[type="submit"]:hover {
+    background-color: #a42e2e; /* Achtergrondkleur van de knop bij hover */
+}
+
+
+
+/* Stijl voor de Add Data pagina */
+
+
+.container {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Stijl voor het formulier voor het toevoegen van een categorie */
+.category-form {
+    flex: 1;
+    margin-right: 20px; /* Voeg ruimte toe tussen de formulieren */
+}
+
+/* Stijl voor het formulier voor het toevoegen van een product */
+.product-form {
+    flex: 1;
+}
+
+/* Stijl voor de formuliergroepen */
+.form-group {
+    margin-bottom: 10px; /* Voeg ruimte toe onder elke formuliergroep */
+}
+
+/* Stijl voor de labels */
+.form-group label {
+    display: block; /* Zorg ervoor dat elk label op een nieuwe regel begint */
+}
+
+/* Stijl voor de invoervelden */
+.form-group input,
+.form-group select {
+    width: calc(100% - 10px); /* Maak de invoervelden iets smaller dan de container om te voorkomen dat ze uitrekken */
+}
+
+
+/* Stijl voor de delete data pagina */
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.header-container {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.category-delete-form {
+    flex: 1;
+    margin-right: 20px; /* Voeg ruimte toe tussen de formulieren */
+}
+
+.product-delete-form {
+    flex: 1;
+}
+
+.form-group {
+    margin-bottom: 10px; /* Voeg ruimte toe onder elke formuliergroep */
+}
+
+.form-group label {
+    display: block; /* Zorg ervoor dat elk label op een nieuwe regel begint */
+}
+
+.form-group button {
+    width: calc(100% - 10px); /* Maak de knoppen iets smaller dan de container om te voorkomen dat ze uitrekken */
+    box-sizing: border-box; /* Zorg ervoor dat padding en border binnen de breedte vallen */
+    padding: 5px; /* Voeg wat padding toe voor een betere look */
+    margin-top: 5px; /* Voeg wat ruimte toe boven de knoppen */
+}
+
+
+/* stijl voor change password */
+
+.reset-password-page .container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+}
+
+.reset-password-page .title {
+    text-align: center;
+}
+
+.reset-password-page .form-container {
+    margin-top: 20px;
+}
+
+.reset-password-page .form-group {
+    margin-bottom: 15px;
+}
+
+.reset-password-page .form-control {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.reset-password-page .btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    background-color: #007bff;
+    cursor: pointer;
+}
+
+.reset-password-page .btn:hover {
+    background-color: #0056b3;
+}
+
+
+

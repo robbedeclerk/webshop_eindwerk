@@ -8,9 +8,14 @@
             {% for product in products %}
             {% if product.category_id == category.id %}
             <div class="product-item">
-                <h3><a href="{{ url_for('product', product_id=product.id) }}">{{ product.name }}</a></h3>
-                <p>{{ product.description }}</p>
-                <p>Price: €{{ product.price }}</p>
+                <div class="product-image">
+                    <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }} Image">
+                </div>
+                <div class="product-info">
+                    <h3><a href="{{ url_for('product', product_id=product.id) }}">{{ product.name }}</a></h3>
+                    <p>{{ product.description }}</p>
+                    <p>Price: €{{ product.price }}</p>
+                </div>
             </div>
             {% endif %}
             {% endfor %}

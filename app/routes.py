@@ -1,11 +1,23 @@
 from flask import render_template, flash, redirect, url_for, request
 from functools import wraps
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, AddCategoryForm, AddProductForm
-from flask_login import current_user, login_user, logout_user, login_required
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, AddCategoryForm, AddProductForm, ResetPasswordForm
+from flask_login import current_user, login_user, logout_user, login_required, LoginManager
 import sqlalchemy as sa
 from app.models import User, Product, Category, CartItem
 from urllib.parse import urlsplit
+from werkzeug.utils import secure_filename
+import os
+
+
+UPLOAD_FOLDER = 'app/static/assets/images'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 def admin_required(func):
     @wraps(func)
@@ -15,6 +27,10 @@ def admin_required(func):
             return redirect(url_for('error_page'))
         return func(*args, **kwargs)
     return decorated_function
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 @app.route('/')
 @app.route('/index')
@@ -104,8 +120,6 @@ def edit_profile():
     return render_template('edit_profile.html', title='Edit Profile', form=form, user=current_user)
 
 @app.route('/add_data', methods=['GET'])
-@login_required
-@admin_required
 def add_data():
     category_choices = [(c.id, c.name) for c in Category.query.all()]
     product_form = AddProductForm()
@@ -114,8 +128,6 @@ def add_data():
     return render_template('add_data.html', title='Add Data', product_form=product_form, category_form=category_form, category_choices=category_choices)
 
 @app.route('/add_category', methods=['POST'])
-@login_required
-@admin_required
 def add_category():
     category_form = AddCategoryForm()
     if category_form.validate_on_submit():
@@ -124,27 +136,36 @@ def add_category():
         db.session.commit()
         flash('Category added successfully!')
         return redirect(url_for('add_data'))
-    return render_template('add_data.html', title='Add Data', category_form=category_form,)
+    return render_template('add_data.html', title='Add Data', category_form=category_form)
 
 @app.route('/add_product', methods=['POST'])
-@login_required
-@admin_required
 def add_product():
     category_choices = [(c.id, c.name) for c in Category.query.all()]
     product_form = AddProductForm()
     product_form.category.choices = category_choices
-    if product_form.validate():
+    if product_form.validate_on_submit():
+        image_file = request.files['image']  # Haal het bestand op uit het verzoek
+        if image_file:  # Controleer of er een bestand is geüpload
+            filename = secure_filename(image_file.filename)  # Genereer een veilige bestandsnaam
+            image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))  # Sla het bestand op in de uploadmap
+        else:
+            filename = 'default_product_image.jpg'  # Als er geen afbeelding is geüpload, gebruik een standaardafbeelding
+
+        # Maak een nieuw productobject aan met de ontvangen gegevens en de bestandsnaam van de afbeelding
         product = Product(
             name=product_form.name.data,
             description=product_form.description.data,
             price=product_form.price.data,
-            category_id=product_form.category.data 
+            category_id=product_form.category.data,
+            image_filename=filename  # Koppel de bestandsnaam van de afbeelding aan het product
         )
         db.session.add(product)
         db.session.commit()
         flash('Product added successfully!')
         return redirect(url_for('add_data'))
     return render_template('add_data.html', title='Add Data', product_form=product_form, category_choices=category_choices)
+
+
 
 @app.route('/delete_data')
 @login_required
@@ -212,6 +233,10 @@ def view_cart():
     cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
     return render_template('cart.html', cart_items=cart_items)
 
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    return redirect(url_for('login'))
+
 @app.route('/remove_from_cart/<int:cart_item_id>', methods=['POST'])
 @login_required
 def remove_from_cart(cart_item_id):
@@ -235,3 +260,20 @@ def update_cart(cart_item_id):
         else:
             flash('Invalid quantity.')
     return redirect(url_for('view_cart'))
+
+@app.route('/reset_password', methods=['GET', 'POST'])
+@login_required
+def reset_password():
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user = current_user
+        if not user.check_password(form.old_password.data):
+            flash('Old password is incorrect.', 'error')
+            return redirect(url_for('reset_password'))
+        
+        user.set_password(form.new_password.data)
+        db.session.commit()
+        flash('Your password has been updated successfully.', 'success')
+        return redirect(url_for('profile'))
+    
+    return render_template('reset_password.html', title='Reset Password', form=form)
