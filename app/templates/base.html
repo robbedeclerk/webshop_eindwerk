@@ -1,31 +1,48 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>dnd supplies</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <div>
-        dnd supplies:
-        <a href="{{ url_for('index') }}">Home</a>
-        {% if current_user.is_anonymous %}
-        <a href="{{ url_for('login') }}">Login</a>
-        {% else %}
-        <a href="{{ url_for('profile') }}">Profile</a>
-        <a href="{{ url_for('logout') }}">Logout</a>
-        {% endif %}
-        {% if current_user.is_authenticated %}
-        <a href="{{ url_for('view_cart') }}">Cart</a>
-        {% else %}
-        <a href="{{ url_for('login') }}">Cart</a>
-        {% endif %}
+    <div class="balk">
+        <div class="balk-content">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='assets/images/logo_dndsupplies.png') }}" alt="logo_dnd_supplies" class="logo">
+            </div>
+            <div class="menu-items">
+                <a href="{{ url_for('index') }}">Home</a>
+            </div>
+            {% if current_user.is_authenticated %}
+                <div class="menu-items">
+                    <a href="{{ url_for('profile') }}">Profile</a>
+                </div>
+                <div class="menu-items">
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                </div>
+            {% else %}
+                <div class="menu-items">
+                    <a href="{{ url_for('login') }}">Login</a>
+                </div>
+            {% endif %}
+            <div class="menu-items">
+                <a href="{{ url_for('view_cart') }}">Cart</a>
+                <a href="{{ url_for('view_cart') }}"><img src="{{ url_for('static', filename='assets/images/shoppingcart.png') }}" alt="cart_icon"></a>
+            </div>
+            {% if current_user.is_authenticated and current_user.admin_rights %}
+                <div class="menu-items dropdown">
+                    <button class="dropbtn">Admin Links</button>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('add_data') }}">Add Data</a>
+                        <a href="{{ url_for('delete_data') }}">Delete Data</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
     </div>
-    <div>
-        {% if current_user.is_authenticated and current_user.admin_rights %}
-        Admin Links:
-        <a href="{{ url_for('add_data') }}">Add Data</a>
-        <a href="{{ url_for('delete_data') }}">Delete Data</a>
-        {% endif %}
+    <div style="margin-top: 50px;"> <!-- Ruimte toevoegen onder de balk om de inhoud eronder te duwen -->
+        {% block content %}{% endblock %}
     </div>
-    {% block content %}{% endblock %}
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>
