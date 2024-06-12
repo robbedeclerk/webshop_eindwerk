@@ -138,7 +138,7 @@ body {
 }
 
 .product-item img {
-    max-width: 30%;
+    max-width: 80%;
     height: auto;
     margin-right: 10px; /* Ruimte tussen de afbeelding en de productinformatie */
 }

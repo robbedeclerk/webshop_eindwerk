@@ -4,6 +4,7 @@ import sqlalchemy.orm as so
 from app import db,login
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from datetime import datetime
 
 class User(UserMixin,db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -56,3 +57,24 @@ class CartItem(db.Model):
 
     def __repr__(self):
         return f'<CartItem {self.id} - User: {self.user_id}, Product: {self.product_id}, Quantity: {self.quantity}>'
+
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    items = db.relationship('OrderItem', backref='order', lazy=True)
+    total_price = db.Column(db.Float, nullable=False)
+    date_ordered = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    country = db.Column(db.String(100), nullable=False)
+    street = db.Column(db.String(100), nullable=False)
+    postal_number = db.Column(db.String(20), nullable=False)
+    house_number = db.Column(db.String(20), nullable=False)
+    bus_number = db.Column(db.String(20), nullable=True)
+
+
+class OrderItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    product = db.relationship('Product', backref='order_items')

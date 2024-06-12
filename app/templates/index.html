@@ -9,7 +9,7 @@
             {% if product.category_id == category.id %}
             <div class="product-item">
                 <div class="product-image">
-                    <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }} Image">
+                    <img src="{{ url_for('static', filename='assets/images/' + product.image_filename) }}" alt="{{ product.name }} Image">
                 </div>
                 <div class="product-info">
                     <h3><a href="{{ url_for('product', product_id=product.id) }}">{{ product.name }}</a></h3>

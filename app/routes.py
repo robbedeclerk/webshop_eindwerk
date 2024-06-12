@@ -4,11 +4,11 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, AddCategoryForm, AddProductForm, ResetPasswordForm
 from flask_login import current_user, login_user, logout_user, login_required, LoginManager
 import sqlalchemy as sa
-from app.models import User, Product, Category, CartItem
+from app.models import User, Product, Category, CartItem, Order, OrderItem
 from urllib.parse import urlsplit
 from werkzeug.utils import secure_filename
+from werkzeug.security import check_password_hash, generate_password_hash
 import os
-
 
 UPLOAD_FOLDER = 'app/static/assets/images'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -119,6 +119,21 @@ def edit_profile():
 
     return render_template('edit_profile.html', title='Edit Profile', form=form, user=current_user)
 
+@app.route('/reset_password', methods=['GET', 'POST'])
+@login_required
+def reset_password():
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        if check_password_hash(current_user.password_hash, form.old_password.data):
+            new_password_hash = generate_password_hash(form.new_password.data)
+            current_user.password_hash = new_password_hash
+            db.session.commit()
+            flash('Your password has been reset successfully!', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('Old password is incorrect. Please try again.', 'error')
+    return render_template('reset_password.html', form=form)
+
 @app.route('/add_data', methods=['GET'])
 def add_data():
     category_choices = [(c.id, c.name) for c in Category.query.all()]
@@ -174,8 +189,6 @@ def delete_data():
     categories = Category.query.all()
     products = Product.query.all()
     return render_template('delete_data.html', categories=categories, products=products)
-
-
 
 @app.route('/delete_category/<int:category_id>', methods=['POST'])
 @login_required
@@ -245,35 +258,95 @@ def remove_from_cart(cart_item_id):
         db.session.delete(cart_item)
         db.session.commit()
         flash('Item removed from cart successfully!')
+    else:
+        flash('Item not found in cart.', 'error')
     return redirect(url_for('view_cart'))
 
 @app.route('/update_cart/<int:cart_item_id>', methods=['POST'])
 @login_required
 def update_cart(cart_item_id):
     cart_item = CartItem.query.get_or_404(cart_item_id)
-    if cart_item:
-        new_quantity = request.form.get('quantity')
-        if new_quantity:
-            cart_item.quantity = int(new_quantity)
-            db.session.commit()
-            flash('Cart item updated successfully!')
-        else:
-            flash('Invalid quantity.')
+    new_quantity = request.form.get('quantity', type=int)
+    if new_quantity is not None and new_quantity > 0:
+        cart_item.quantity = new_quantity
+        db.session.commit()
+        flash('Item updated successfully!')
+    else:
+        flash('Invalid quantity.', 'error')
     return redirect(url_for('view_cart'))
 
-@app.route('/reset_password', methods=['GET', 'POST'])
+
+
+@app.route('/checkout', methods=['GET'])
 @login_required
-def reset_password():
-    form = ResetPasswordForm()
-    if form.validate_on_submit():
-        user = current_user
-        if not user.check_password(form.old_password.data):
-            flash('Old password is incorrect.', 'error')
-            return redirect(url_for('reset_password'))
-        
-        user.set_password(form.new_password.data)
-        db.session.commit()
-        flash('Your password has been updated successfully.', 'success')
-        return redirect(url_for('profile'))
+def checkout():
+    cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    return render_template('checkout.html', cart_items=cart_items, total_price=total_price)
+
+
+from flask import request
+
+@app.route('/place_order', methods=['POST'])
+@login_required
+def place_order():
+    cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
+    if not cart_items:
+        flash('Your cart is empty.', 'error')
+        return redirect(url_for('index'))
     
-    return render_template('reset_password.html', title='Reset Password', form=form)
+    # Controleer of alternatieve adresgegevens zijn ingevuld
+    alt_country = request.form.get('alt_country')
+    alt_street = request.form.get('alt_street')
+    alt_postal_number = request.form.get('alt_postal_number')
+    alt_house_number = request.form.get('alt_house_number')
+    alt_bus_number = request.form.get('alt_bus_number')
+    
+    # Gebruik standaardadresgegevens van de huidige gebruiker
+    country = current_user.country
+    street = current_user.street
+    postal_number = current_user.postal_number
+    house_number = current_user.house_number
+    bus_number = current_user.bus_number
+    
+    # Gebruik alternatieve adresgegevens als deze zijn ingevuld
+    if alt_country:
+        country = alt_country
+    if alt_street:
+        street = alt_street
+    if alt_postal_number:
+        postal_number = alt_postal_number
+    if alt_house_number:
+        house_number = alt_house_number
+    if alt_bus_number:
+        bus_number = alt_bus_number
+    
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    
+    # Create the order with address details
+    order = Order(
+        user_id=current_user.id,
+        total_price=total_price,
+        country=country,
+        street=street,
+        postal_number=postal_number,
+        house_number=house_number,
+        bus_number=bus_number
+    )
+    db.session.add(order)
+    db.session.commit()  # Commit to get the order id
+    
+    # Create order items
+    for item in cart_items:
+        order_item = OrderItem(order_id=order.id, product_id=item.product.id, quantity=item.quantity)
+        db.session.add(order_item)
+        db.session.delete(item)  # Remove the item from the cart
+    
+    db.session.commit()
+    
+    flash('Your order has been placed successfully!', 'success')
+    return redirect(url_for('index'))
+
+
+
+
