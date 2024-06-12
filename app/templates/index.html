@@ -1,26 +1,45 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div class="categories">
-    {% for category in categories %}
-    <div class="category">
-        <h2 class="category-title">{{ category.name }}</h2>
-        <div class="product-grid">
-            {% for product in products %}
-            {% if product.category_id == category.id %}
-            <div class="product-item">
-                <div class="product-image">
-                    <img src="{{ url_for('static', filename='assets/images/' + product.image_filename) }}" alt="{{ product.name }} Image">
-                </div>
-                <div class="product-info">
-                    <h3><a href="{{ url_for('product', product_id=product.id) }}">{{ product.name }}</a></h3>
-                    <p>{{ product.description }}</p>
-                    <p>Price: €{{ product.price }}</p>
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Shop in style</h1>
+            <p class="lead fw-normal text-white-50 mb-0">With this shop homepage template</p>
+        </div>
+    </div>
+</header>
+<!-- Section-->
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <!-- Replace this part with your current content -->
+        <div class="categories">
+            {% for category in categories %}
+            <div class="category">
+                <h2 class="category-title">{{ category.name }}</h2>
+                <div class="product-grid">
+                    {% for product in products %}
+                    {% if product.category_id == category.id %}
+                    <div class="product-item">
+                        <div class="product-image">
+                            <img src="{{ url_for('static', filename='assets/images/' + product.image_filename) }}" alt="{{ product.name }} Image">
+                        </div>
+                        <div class="product-info">
+                            <h3><a href="{{ url_for('product', product_id=product.id) }}">{{ product.name }}</a></h3>
+                            <p>{{ product.description }}</p>
+                            <p>Price: €{{ product.price }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
-            {% endif %}
             {% endfor %}
         </div>
     </div>
-    {% endfor %}
-</div>
+</section>
+<!-- Footer-->
+<footer class="py-5 bg-dark">
+    <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p></div>
+</footer>
 {% endblock %}
