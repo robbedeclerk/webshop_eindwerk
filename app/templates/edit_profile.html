@@ -1,35 +1,90 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="edit-profile-container">
-    <form action="{{ url_for('edit_profile') }}" method="post">
-        {{ form.hidden_tag() }}
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" value="{{ current_user.email }}" required>
+    <header class="bg-gray py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Edit Profile</h1>
+                <!-- You can add a subtitle or any additional content here -->
+            </div>
         </div>
-        <div class="form-group">
-            <label for="country">Country:</label>
-            <input type="text" id="country" name="country" value="{{ current_user.country }}" required>
+    </header>
+
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5">
+            <div class="card p-5 mx-auto" style="max-width: 600px;">
+                <form action="{{ url_for('edit_profile') }}" method="post">
+                    {{ form.hidden_tag() }}
+
+                    <h2 class="text-center mb-4">Edit Profile Details</h2>
+                    <hr>
+
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" value="{{ current_user.email }}" class="form-control mb-3" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country">Country:</label>
+                        <input type="text" id="country" name="country" value="{{ current_user.country }}" class="form-control mb-3" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="street">Street:</label>
+                        <input type="text" id="street" name="street" value="{{ current_user.street }}" class="form-control mb-3" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="postal_number">Postal Number:</label>
+                        <input type="text" id="postal_number" name="postal_number" value="{{ current_user.postal_number }}" class="form-control mb-3" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="house_number">House Number:</label>
+                        <input type="text" id="house_number" name="house_number" value="{{ current_user.house_number }}" class="form-control mb-3" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bus_number">Bus Number:</label>
+                        <input type="text" id="bus_number" name="bus_number" value="{{ current_user.bus_number }}" class="form-control mb-3">
+                    </div>
+
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-secondary mt-4">Update Profile</button>
+                    </div>
+
+                    <!-- Knoppen onder elkaar -->
+                    <div class="form-group text-center">
+                        <a href="{{ url_for('profile') }}" class="btn btn-secondary mt-2">Back to Profile</a>
+                    </div>
+                    <div class="form-group text-center">
+                        <a href="{{ url_for('reset_password') }}" class="btn btn-secondary">Change Password</a>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="street">Street:</label>
-            <input type="text" id="street" name="street" value="{{ current_user.street }}" required>
+    </section>
+
+    <footer class="bg-gray py-5">
+        <div class="container">
+            <p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p>
         </div>
-        <div class="form-group">
-            <label for="postal_number">Postal Number:</label>
-            <input type="text" id="postal_number" name="postal_number" value="{{ current_user.postal_number }}" required>
-        </div>
-        <div class="form-group">
-            <label for="house_number">House Number:</label>
-            <input type="text" id="house_number" name="house_number" value="{{ current_user.house_number }}" required>
-        </div>
-        <div class="form-group">
-            <label for="bus_number">Bus Number:</label>
-            <input type="text" id="bus_number" name="bus_number" value="{{ current_user.bus_number }}">
-        </div>
-        <div class="form-group">
-            <input type="submit" value="Update Profile" class="submit-btn">
-        </div>
-    </form>
-</div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.getElementById('toggle-alt-address');
+            const altAddressFields = document.getElementById('alt-address-fields');
+            const originalAddress = document.getElementById('original-address');
+
+            toggleButton.addEventListener('click', function() {
+                if (altAddressFields.style.display === 'none') {
+                    altAddressFields.style.display = 'block';
+                    originalAddress.style.display = 'none';
+                } else {
+                    altAddressFields.style.display = 'none';
+                    originalAddress.style.display = 'block';
+                }
+            });
+        });
+    </script>
 {% endblock %}

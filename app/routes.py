@@ -237,14 +237,16 @@ def add_to_cart(product_id):
     else:
         # Handle GET request if needed
         return redirect(url_for('index'))
-    
-    return redirect(url_for('index'))
+
+
 
 @app.route('/cart')
 @login_required
 def view_cart():
     cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
-    return render_template('cart.html', cart_items=cart_items)
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    return render_template('cart.html', cart_items=cart_items, total_price=total_price)
+
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
@@ -283,6 +285,7 @@ def checkout():
     cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
     total_price = sum(item.product.price * item.quantity for item in cart_items)
     return render_template('checkout.html', cart_items=cart_items, total_price=total_price)
+
 
 
 from flask import request

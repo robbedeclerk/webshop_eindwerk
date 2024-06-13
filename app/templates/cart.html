@@ -1,45 +1,61 @@
 {% extends "base.html" %}
+
 {% block content %}
-    <h1>Shopping Cart</h1>
-    {% if cart_items %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for cart_item in cart_items %}
-                    <tr>
-                        <td>{{ cart_item.product.name }}</td>
-                        <td>{{ cart_item.product.description }}</td>
-                        <td>{{ cart_item.product.price }}</td>
-                        <td>
-                            <form action="{{ url_for('update_cart', cart_item_id=cart_item.id) }}" method="post">
-                                <input type="number" name="quantity" value="{{ cart_item.quantity }}" min="1">
-                                <input type="submit" value="Update">
-                            </form>
-                        </td>
-                        <td>{{ cart_item.product.price * cart_item.quantity }}</td>
-                        <td>
-                            <form action="{{ url_for('remove_from_cart', cart_item_id=cart_item.id) }}" method="post">
-                                <input type="submit" value="Remove">
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <h3>Total Price: €{{ total_price }}</h3>
-        <form action="{{ url_for('checkout') }}" method="get">
-            <button type="submit">Checkout</button>
-        </form>
-    {% else %}
-        <p>Your shopping cart is empty.</p>
-    {% endif %}
+    <header class="bg-gray py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Shopping Cart</h1>
+            </div>
+        </div>
+    </header>
+    
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5">
+            {% if cart_items %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cart_item in cart_items %}
+                            <tr>
+                                <td>{{ cart_item.product.name }}</td>
+                                <td>{{ cart_item.product.description }}</td>
+                                <td>€{{ cart_item.product.price }}</td>
+                                <td>
+                                    <form action="{{ url_for('update_cart', cart_item_id=cart_item.id) }}" method="post">
+                                        <input type="number" name="quantity" value="{{ cart_item.quantity }}" min="1">
+                                        <input type="submit" value="Update">
+                                    </form>
+                                </td>
+                                <td>€{{ cart_item.product.price * cart_item.quantity }}</td>
+                                <td>
+                                    <form action="{{ url_for('remove_from_cart', cart_item_id=cart_item.id) }}" method="post">
+                                        <input type="submit" value="Remove">
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <h3>Total Price: €{{ total_price }}</h3> <!-- Ensure total price is displayed here -->
+                <form action="{{ url_for('checkout') }}" method="get">
+                    <button type="submit" class="btn btn-secondary">Checkout</button>
+                </form>
+            {% else %}
+                <p>Your shopping cart is empty.</p>
+            {% endif %}
+        </div>
+    </section>
+    
+    <footer class="bg-gray py-5">
+        <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p></div>
+    </footer>
 {% endblock %}

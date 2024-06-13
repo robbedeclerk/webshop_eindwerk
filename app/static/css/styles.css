@@ -79,6 +79,84 @@
   --bs-highlight-bg: #fff3cd;
 }
 
+.profile-details {
+  list-style-type: none;
+  padding: 0;
+}
+
+.profile-details li {
+  margin-bottom: 10px;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #495057;
+}
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #495057;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.py-5 {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+.bg-gray {
+  background-color: #6c757d;
+  color: white;
+}
+
+.container {
+  width: 80%;
+  margin: auto;
+}
+
+
 .bg-gray {
   background-color: #6c757d;
 }

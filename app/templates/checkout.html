@@ -1,49 +1,78 @@
 {% extends "base.html" %}
+
 {% block content %}
-<body>
-    <h1>Checkout</h1>
-    <form action="{{ url_for('place_order') }}" method="POST">
-        <h2>Winkelwagen</h2>
-        <ul>
-            {% for item in cart_items %}
-            <li>{{ item.product.name }} - €{{ item.product.price }} x {{ item.quantity }}</li>
-            {% endfor %}
-        </ul>
-        <h3>Totaal: €{{ total_price }}</h3>
-
-        <div id="original-address">
-            <h2>Adresgegevens</h2>
-            <label for="country">Land:</label>
-            <input type="text" id="country" name="country" value="{{ current_user.country }}" required><br>
-            <label for="street">Straat:</label>
-            <input type="text" id="street" name="street" value="{{ current_user.street }}" required><br>
-            <label for="postal_number">Postcode:</label>
-            <input type="text" id="postal_number" name="postal_number" value="{{ current_user.postal_number }}" required><br>
-            <label for="house_number">Huisnummer:</label>
-            <input type="text" id="house_number" name="house_number" value="{{ current_user.house_number }}" required><br>
-            <label for="bus_number">Busnummer:</label>
-            <input type="text" id="bus_number" name="bus_number" value="{{ current_user.bus_number }}"><br>
+    <header class="bg-gray py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Checkout</h1>
+                <!-- You can add a subtitle or any additional content here -->
+            </div>
         </div>
-
-        <div id="alt-address-fields" style="display: none;">
-            <h2>Alternatief Adresgegevens (Optioneel)</h2>
-            <label for="alt_country">Land:</label>
-            <input type="text" id="alt_country" name="alt_country"><br>
-            <label for="alt_street">Straat:</label>
-            <input type="text" id="alt_street" name="alt_street"><br>
-            <label for="alt_postal_number">Postcode:</label>
-            <input type="text" id="alt_postal_number" name="alt_postal_number"><br>
-            <label for="alt_house_number">Huisnummer:</label>
-            <input type="text" id="alt_house_number" name="alt_house_number"><br>
-            <label for="alt_bus_number">Busnummer:</label>
-            <input type="text" id="alt_bus_number" name="alt_bus_number"><br>
+    </header>
+    
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5">
+            <div class="card p-5 mx-auto" style="max-width: 900px;">
+                <form action="{{ url_for('place_order') }}" method="POST">
+                    <h2 class="text-center mb-4">Shopping Cart</h2>
+                    <hr>
+                    <ul class="text-center">
+                        {% for item in cart_items %}
+                            <li>{{ item.product.name }} - €{{ item.product.price }} x {{ item.quantity }}</li>
+                        {% endfor %}
+                    </ul>
+                    <h3 class="text-center mt-4">Total: €{{ total_price }}</h3>
+    
+                    <div id="original-address" class="mt-5">
+                        <h2 class="text-center mb-4">Address Details</h2>
+                        <hr>
+                        <label for="country">Country:</label>
+                        <input type="text" id="country" name="country" value="{{ current_user.country }}" class="form-control mb-3" required><br>
+                    
+                        <label for="street">Street:</label>
+                        <input type="text" id="street" name="street" value="{{ current_user.street }}" class="form-control mb-3" required><br>
+                    
+                        <label for="postal_number">Postal Code:</label>
+                        <input type="text" id="postal_number" name="postal_number" value="{{ current_user.postal_number }}" class="form-control mb-3" required><br>
+                    
+                        <label for="house_number">House Number:</label>
+                        <input type="text" id="house_number" name="house_number" value="{{ current_user.house_number }}" class="form-control mb-3" required><br>
+                    
+                        <label for="bus_number">Bus Number:</label>
+                        <input type="text" id="bus_number" name="bus_number" value="{{ current_user.bus_number }}" class="form-control mb-3">
+                    </div>
+    
+                    <div id="alt-address-fields" class="mt-5" style="display: none;">
+                        <h2 class="text-center mb-4">Alternative Address Details (Optional)</h2>
+                        <hr>
+                        <label for="alt_country">Country:</label>
+                        <input type="text" id="alt_country" name="alt_country" class="form-control mb-3"><br>
+                    
+                        <label for="alt_street">Street:</label>
+                        <input type="text" id="alt_street" name="alt_street" class="form-control mb-3"><br>
+                    
+                        <label for="alt_postal_number">Postal Code:</label>
+                        <input type="text" id="alt_postal_number" name="alt_postal_number" class="form-control mb-3"><br>
+                    
+                        <label for="alt_house_number">House Number:</label>
+                        <input type="text" id="alt_house_number" name="alt_house_number" class="form-control mb-3"><br>
+                    
+                        <label for="alt_bus_number">Bus Number:</label>
+                        <input type="text" id="alt_bus_number" name="alt_bus_number" class="form-control mb-3">
+                    </div>
+    
+                    <button type="button" id="toggle-alt-address" class="btn btn-secondary mt-4">Use Alternative Address</button><br>
+    
+                    <button type="submit" class="btn btn-secondary mt-4">Place Order</button>
+                </form>
+            </div>
         </div>
-
-        <button type="button" id="toggle-alt-address">Ander adres gebruiken</button><br>
-
-        <button type="submit">Plaats Bestelling</button>
-    </form>
-
+    </section>
+    
+    <footer class="bg-gray py-5">
+        <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p></div>
+    </footer>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const toggleButton = document.getElementById('toggle-alt-address');
@@ -61,5 +90,4 @@
             });
         });
     </script>
-</body>
 {% endblock %}

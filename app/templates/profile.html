@@ -1,16 +1,38 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="profile-container">
-    <ul class="profile-details">
-        <li><strong>Username:</strong> {{ user.username }}</li>
-        <li><strong>Email:</strong> {{ user.email }}</li>
-        <li><strong>Country:</strong> {{ user.country }}</li>
-        <li><strong>Street:</strong> {{ user.street }}</li>
-        <li><strong>Postal Number:</strong> {{ user.postal_number }}</li>
-        <li><strong>House Number:</strong> {{ user.house_number }}</li>
-        <li><strong>Bus Number:</strong> {{ user.bus_number }}</li>
-    </ul>
-    <h2><a href="{{ url_for('edit_profile') }}">Edit Profile</a></h2>
-    <h2><a href="{{ url_for('reset_password') }}"> verander wachtwoord</a></h2>
-</div>
+    <header class="bg-gray py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">User Profile</h1>
+                <!-- You can add a subtitle or any additional content here -->
+            </div>
+        </div>
+    </header>
+
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5">
+            <div class="card p-5 mx-auto" style="max-width: 600px;">
+                <ul class="profile-details">
+                    <li><strong>Username:</strong> {{ user.username }}</li>
+                    <li><strong>Email:</strong> {{ user.email }}</li>
+                    <li><strong>Country:</strong> {{ user.country }}</li>
+                    <li><strong>Street:</strong> {{ user.street }}</li>
+                    <li><strong>Postal Number:</strong> {{ user.postal_number }}</li>
+                    <li><strong>House Number:</strong> {{ user.house_number }}</li>
+                    <li><strong>Bus Number:</strong> {{ user.bus_number }}</li>
+                </ul>
+
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('edit_profile') }}" class="btn btn-secondary">Edit Profile</a>
+                    <a href="{{ url_for('reset_password') }}" class="btn btn-secondary">Change Password</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray py-5">
+        <div class="container">
+            <p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p>
+        </div>
+    </footer>
 {% endblock %}
