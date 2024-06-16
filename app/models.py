@@ -70,6 +70,7 @@ class Order(db.Model):
     postal_number = db.Column(db.String(20), nullable=False)
     house_number = db.Column(db.String(20), nullable=False)
     bus_number = db.Column(db.String(20))
+    complete = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return f'<Order {self.id} by User {self.user_id}, Total Price: {self.total_price}>'

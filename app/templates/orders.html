@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Orders</h1>
+    <hr>
+
+    <form action="{{ url_for('orders') }}" method="get" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Search by Order Number" value="{{ search_term }}">
+            <button type="submit"class="btn btn-secondary">Search</button>
+        </div>
+    </form>
+
+    <div class="mb-3">
+        <form class="form-inline">
+            <label class="my-1 mr-2" for="statusFilter">Filter:</label>
+            <select class="custom-select my-1 mr-sm-2" id="statusFilter" name="status">
+                <option value="all" {% if status == 'all' %}selected{% endif %}>All</option>
+                <option value="complete" {% if status == 'complete' %}selected{% endif %}>Complete</option>
+                <option value="not_complete" {% if status == 'not_complete' %}selected{% endif %}>Not Complete</option>
+            </select>
+            <button type="submit" class="btn btn-secondary">Apply</button>
+        </form>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Order ID</th>
+                <th scope="col">User ID</th>
+                <th scope="col">Date</th>
+                <th scope="col">Total Price</th>
+                <th scope="col">Status</th>
+                <th scope="col">Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.user_id }}</td>
+                <td>{{ order.date_ordered.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ order.total_price }}</td>
+                <td>
+                    {% if order.complete %}
+                        Complete
+                    {% else %}
+                        Not Complete
+                    {% endif %}
+                </td>
+                <td><a href="{{ url_for('order_details', order_id=order.id) }}">View Details</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if prev_page or next_page %}
+    <nav aria-label="Pagination">
+        <ul class="pagination">
+            {% if prev_page %}
+            <li class="page-item"><a class="page-link" href="{{ prev_page }}">Previous</a></li>
+            {% endif %}
+
+            <li class="page-item disabled">
+                <span class="page-link">Page {{ orders.page }} of {{ orders.pages }}</span>
+            </li>
+
+            {% if next_page %}
+            <li class="page-item"><a class="page-link" href="{{ next_page }}">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

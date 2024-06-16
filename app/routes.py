@@ -134,83 +134,70 @@ def reset_password():
             flash('Old password is incorrect. Please try again.', 'error')
     return render_template('reset_password.html', form=form)
 
-@app.route('/add_data', methods=['GET'])
-def add_data():
-    category_choices = [(c.id, c.name) for c in Category.query.all()]
-    product_form = AddProductForm()
-    product_form.category.choices = category_choices
-    category_form = AddCategoryForm()
-    return render_template('add_data.html', title='Add Data', product_form=product_form, category_form=category_form, category_choices=category_choices)
-
-@app.route('/add_category', methods=['POST'])
-def add_category():
-    category_form = AddCategoryForm()
-    if category_form.validate_on_submit():
-        category = Category(name=category_form.name.data)
-        db.session.add(category)
-        db.session.commit()
-        flash('Category added successfully!')
-        return redirect(url_for('add_data'))
-    return render_template('add_data.html', title='Add Data', category_form=category_form)
-
-@app.route('/add_product', methods=['POST'])
-def add_product():
-    category_choices = [(c.id, c.name) for c in Category.query.all()]
-    product_form = AddProductForm()
-    product_form.category.choices = category_choices
-    if product_form.validate_on_submit():
-        image_file = request.files['image']  # Haal het bestand op uit het verzoek
-        if image_file:  # Controleer of er een bestand is geüpload
-            filename = secure_filename(image_file.filename)  # Genereer een veilige bestandsnaam
-            image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))  # Sla het bestand op in de uploadmap
-        else:
-            filename = 'default_product_image.jpg'  # Als er geen afbeelding is geüpload, gebruik een standaardafbeelding
-
-        # Maak een nieuw productobject aan met de ontvangen gegevens en de bestandsnaam van de afbeelding
-        product = Product(
-            name=product_form.name.data,
-            description=product_form.description.data,
-            price=product_form.price.data,
-            category_id=product_form.category.data,
-            image_filename=filename  # Koppel de bestandsnaam van de afbeelding aan het product
-        )
-        db.session.add(product)
-        db.session.commit()
-        flash('Product added successfully!')
-        return redirect(url_for('add_data'))
-    return render_template('add_data.html', title='Add Data', product_form=product_form, category_choices=category_choices)
-
-
-
-@app.route('/delete_data')
+@app.route('/manage_shop_data', methods=['GET', 'POST'])
 @login_required
 @admin_required
-def delete_data():
+def manage_shop_data():
+    category_choices = [(c.id, c.name) for c in Category.query.all()]
+    product_form = AddProductForm()
+    product_form.category.choices = category_choices
+    category_form = AddCategoryForm()
+
+    if request.method == 'POST':
+        if 'add_category' in request.form:
+            if category_form.validate_on_submit():
+                category = Category(name=category_form.name.data)
+                db.session.add(category)
+                db.session.commit()
+                flash('Category added successfully!')
+                return redirect(url_for('manage_shop_data'))
+
+        if 'add_product' in request.form:
+            if product_form.validate_on_submit():
+                image_file = request.files['image']
+                if image_file:
+                    filename = secure_filename(image_file.filename)
+                    image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                else:
+                    filename = 'default_product_image.jpg'
+
+                product = Product(
+                    name=product_form.name.data,
+                    description=product_form.description.data,
+                    price=product_form.price.data,
+                    category_id=product_form.category.data,
+                    image_filename=filename
+                )
+                db.session.add(product)
+                db.session.commit()
+                flash('Product added successfully!')
+                return redirect(url_for('manage_shop_data'))
+
+        if 'delete_category' in request.form:
+            category_id = request.form.get('category_id')
+            if category_id:
+                category = Category.query.get_or_404(category_id)
+                db.session.delete(category)
+                db.session.commit()
+                flash('Category deleted successfully!')
+                return redirect(url_for('manage_shop_data'))
+
+        if 'delete_product' in request.form:
+            product_id = request.form.get('product_id')
+            if product_id:
+                product = Product.query.get_or_404(product_id)
+                db.session.delete(product)
+                db.session.commit()
+                flash('Product deleted successfully!')
+                return redirect(url_for('manage_shop_data'))
+
     categories = Category.query.all()
     products = Product.query.all()
-    return render_template('delete_data.html', categories=categories, products=products)
 
-@app.route('/delete_category/<int:category_id>', methods=['POST'])
-@login_required
-@admin_required
-def delete_category(category_id):
-    category = Category.query.get_or_404(category_id)
-    db.session.delete(category)
-    db.session.commit()
-    
-    flash('Category deleted successfully!')
-    return redirect(url_for('delete_data'))
+    return render_template('manage_shop_data.html', title='Manage Shop Data', 
+                           product_form=product_form, category_form=category_form, 
+                           categories=categories, products=products)
 
-@app.route('/delete_product/<int:product_id>', methods=['POST'])
-@login_required
-@admin_required
-def delete_product(product_id):
-    product = Product.query.get_or_404(product_id)
-    db.session.delete(product)
-    db.session.commit()
-    
-    flash('Product deleted successfully!')
-    return redirect(url_for('delete_data'))
 
 @app.route('/product/<int:product_id>')
 def product(product_id):
@@ -351,5 +338,60 @@ def place_order():
     return redirect(url_for('index'))
 
 
+@app.route('/statistics')
+@admin_required
+def statistics():
+    products = Product.query.all()
+    product_stats = []
 
+    for product in products:
+        total_sold = db.session.query(db.func.sum(OrderItem.quantity)).filter_by(product_id=product.id).scalar() or 0
+        product_stats.append({
+            'name': product.name,
+            'total_sold': total_sold
+        })
 
+    return render_template('statistics.html', products=product_stats)
+
+@app.route('/orders', methods=['GET'])
+@admin_required
+def orders():
+    status = request.args.get('status', 'all')
+    page = request.args.get('page', 1, type=int)
+    per_page = 5
+    search_term = request.args.get('search', '')
+
+    if status == 'complete':
+        query = Order.query.filter_by(complete=True)
+    elif status == 'not_complete':
+        query = Order.query.filter_by(complete=False)
+    else:
+        query = Order.query
+
+    if search_term:
+        if search_term.isdigit():
+            query = query.filter(Order.id == int(search_term))
+        else:
+            flash('Please enter a valid order ID for search.', 'error')
+            return redirect(url_for('orders'))
+
+    orders = query.order_by(Order.date_ordered.desc()).paginate(page=page, per_page=per_page, error_out=False)
+
+    prev_page = url_for('orders', page=orders.prev_num, status=status, search=search_term) if orders.has_prev else None
+    next_page = url_for('orders', page=orders.next_num, status=status, search=search_term) if orders.has_next else None
+
+    return render_template('orders.html', orders=orders.items, prev_page=prev_page, next_page=next_page, status=status, search_term=search_term)
+
+@app.route('/order/<int:order_id>')
+@admin_required
+def order_details(order_id):
+    order = Order.query.get_or_404(order_id)
+    order_items = OrderItem.query.filter_by(order_id=order_id).all()
+    return render_template('order_details.html', order=order, order_items=order_items)
+
+@app.route('/toggle_order_status/<int:order_id>', methods=['POST'])
+def toggle_order_status(order_id):
+    order = Order.query.get_or_404(order_id)
+    order.complete = not order.complete 
+    db.session.commit()
+    return redirect(url_for('order_details', order_id=order_id))
