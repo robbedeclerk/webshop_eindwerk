@@ -27,8 +27,8 @@
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" href="{{ url_for('index') }}">All Products</a></li>
                                 <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item" href="#!">Popular Items</a></li>
-                                <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
+                                <li><a class="dropdown-item" href="{{url_for('popular_items')}}">Popular Items</a></li>
+                                <li><a class="dropdown-item" href="{{url_for('new_items')}}">New Arrivals</a></li>
                             </ul>
                         </li>
                         {% if current_user.admin_rights %}

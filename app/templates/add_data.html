@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+<!-- {% extends "base.html" %}
 {% block content %}
 <body>
     <h1>Add Category</h1>
     <form method="POST" action="{{ url_for('add_category') }}">
-        {{ category_form.hidden_tag() }}  <!-- Dit is nodig voor CSRF-bescherming -->
+        {{ category_form.hidden_tag() }} 
         <p>{{ category_form.name.label }}: {{ category_form.name }}</p>
         <p>{{ category_form.submit }}</p>
     </form>
@@ -15,8 +15,8 @@
         <p>{{ product_form.description.label }}: {{ product_form.description }}</p>
         <p>{{ product_form.price.label }}: {{ product_form.price }}</p>
         <p>{{ product_form.category.label }}: {{ product_form.category }}</p>
-        <p>{{ product_form.image.label }}: {{ product_form.image }}</p> <!-- Toegevoegd voor het uploaden van afbeeldingen -->
+        <p>{{ product_form.image.label }}: {{ product_form.image }}</p> 
         <p>{{ product_form.submit }}</p>
     </form>
 </body>
-{% endblock %}
+{% endblock %} -->
