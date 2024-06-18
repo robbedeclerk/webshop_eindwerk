@@ -244,7 +244,8 @@ def add_to_cart(product_id):
 def view_cart():
     cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
     total_price = sum(item.product.price * item.quantity for item in cart_items)
-    return render_template('cart.html', cart_items=cart_items, total_price=total_price)
+    total_price_formatted = "{:.2f}".format(total_price)
+    return render_template('cart.html', cart_items=cart_items, total_price=total_price_formatted)
 
 
 @login_manager.unauthorized_handler
@@ -283,7 +284,9 @@ def update_cart(cart_item_id):
 def checkout():
     cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
     total_price = sum(item.product.price * item.quantity for item in cart_items)
-    return render_template('checkout.html', cart_items=cart_items, total_price=total_price)
+    total_price_formatted = "{:.2f}".format(total_price)
+    return render_template('checkout.html', cart_items=cart_items, total_price=total_price_formatted)
+
 
 
 

@@ -79,6 +79,15 @@
   --bs-highlight-bg: #fff3cd;
 }
 
+.cart-table a {
+  color: black; 
+  text-decoration: none; 
+}
+
+.cart-table a:hover {
+  color: black; 
+}
+
 .page-link {
   color: black !important;
 }
