@@ -400,7 +400,6 @@ def toggle_order_status(order_id):
 
 @app.route('/popular_items')
 def popular_items():
-    # Query om de 5 meest gekochte items op te halen
     popular_items = db.session.query(Product, db.func.count(OrderItem.product_id).label('total_orders')) \
                     .join(OrderItem, Product.id == OrderItem.product_id) \
                     .group_by(Product.id) \
@@ -408,15 +407,14 @@ def popular_items():
                     .limit(5) \
                     .all()
 
-    categories = Category.query.all()  # Alle categorieën ophalen voor de navigatie
+    categories = Category.query.all()
 
     return render_template('popular_items.html', popular_items=popular_items, categories=categories)
 
 @app.route('/new_items')
 def new_items():
-    # Query om de 5 nieuwste items op te halen
     new_items = Product.query.order_by(Product.created_at.desc()).limit(5).all()
 
-    categories = Category.query.all()  # Alle categorieën ophalen voor de navigatie
+    categories = Category.query.all() 
 
     return render_template('new_items.html', new_items=new_items, categories=categories)
