@@ -27,6 +27,10 @@ class RegistrationForm(FlaskForm):
     bus_number = IntegerField('Bus Number', default='0')  # No validation required for bus number
 
     submit = SubmitField('Register')
+    
+    def validate_password(self, password):
+        if len(password.data) < 8:
+            raise ValidationError('Password must be at least 8 characters long.')
 
     def validate_username(self, username):
         user = db.session.scalar(sa.select(User).where(
@@ -83,3 +87,7 @@ class ResetPasswordForm(FlaskForm):
         DataRequired(), EqualTo('new_password', message='Passwords must match')
     ])
     submit = SubmitField('Reset Password')
+
+    def validate_new_password(self, new_password):
+        if len(new_password.data) < 8:
+            raise ValidationError('New password must be at least 8 characters long.')
