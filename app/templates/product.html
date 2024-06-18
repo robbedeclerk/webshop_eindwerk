@@ -11,9 +11,10 @@
             <p class="lead">Description: {{ product.description }}</p>
             <p class="h4">Price: €{{ product.price }}</p>
             <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="post" class="mt-4">
+                {{ form.hidden_tag() }}
                 <div class="mb-3">
                     <label for="quantity" class="form-label">Quantity:</label>
-                    <input type="number" name="quantity" id="quantity" class="form-control" value="1" min="1">
+                    {{ form.quantity(class="form-control") }}
                 </div>
                 <button type="submit" class="btn btn-secondary">Add to Cart</button>
             </form>

@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, url_for, request
 from functools import wraps
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, AddCategoryForm, AddProductForm, ResetPasswordForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, AddCategoryForm, AddProductForm, ResetPasswordForm, AddToCartForm
 from flask_login import current_user, login_user, logout_user, login_required, LoginManager
 import sqlalchemy as sa
 from app.models import User, Product, Category, CartItem, Order, OrderItem
@@ -204,7 +204,8 @@ def manage_shop_data():
 @app.route('/product/<int:product_id>')
 def product(product_id):
     product = Product.query.get_or_404(product_id)
-    return render_template('product.html', product=product)
+    form = AddToCartForm()
+    return render_template('product.html', product=product, form=form)
 
 @app.route('/add_to_cart/<int:product_id>', methods=['GET', 'POST'])
 def add_to_cart(product_id):
@@ -213,19 +214,28 @@ def add_to_cart(product_id):
         flash('Product not found.', 'error')
         return redirect(url_for('index'))
 
-    if request.method == 'POST':
+    form = AddToCartForm()
+    if form.validate_on_submit():
         if current_user.is_authenticated:
-            cart_item = CartItem(user_id=current_user.id, product_id=product_id)
-            db.session.add(cart_item)
+            quantity = form.quantity.data
+            cart_item = CartItem.query.filter_by(user_id=current_user.id, product_id=product_id).first()
+            if cart_item:
+                cart_item.quantity += quantity
+            else:
+                cart_item = CartItem(user_id=current_user.id, product_id=product_id, quantity=quantity)
+                db.session.add(cart_item)
             db.session.commit()
-            flash('Item added to cart successfully!')
+            flash('Item added to cart successfully!', 'success')
+            return redirect(url_for('index'))
         else:
             flash('You need to log in to add items to the cart.', 'error')
             return redirect(url_for('login'))
-        return redirect(url_for('index'))
+
     else:
-        # Handle GET request if needed
-        return redirect(url_for('index'))
+        flash('Failed to add item to cart. Please check the quantity.', 'error')
+
+    return redirect(url_for('product', product_id=product_id))
+
 
 
 
