@@ -382,7 +382,8 @@ def orders():
     prev_page = url_for('orders', page=orders.prev_num, status=status, search=search_term) if orders.has_prev else None
     next_page = url_for('orders', page=orders.next_num, status=status, search=search_term) if orders.has_next else None
 
-    return render_template('orders.html', orders=orders.items, prev_page=prev_page, next_page=next_page, status=status, search_term=search_term)
+    return render_template('orders.html', orders=orders, prev_page=prev_page, next_page=next_page, status=status, search_term=search_term)
+
 
 @app.route('/order/<int:order_id>')
 @admin_required

@@ -79,6 +79,15 @@
   --bs-highlight-bg: #fff3cd;
 }
 
+.page-link {
+  color: black !important;
+}
+
+.page-link:hover {
+  color: gray !important; 
+}
+
+
 .profile-details {
   list-style-type: none;
   padding: 0;
