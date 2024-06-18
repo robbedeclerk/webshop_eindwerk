@@ -404,7 +404,7 @@ def popular_items():
                     .join(OrderItem, Product.id == OrderItem.product_id) \
                     .group_by(Product.id) \
                     .order_by(db.desc('total_orders')) \
-                    .limit(5) \
+                    .limit(4) \
                     .all()
 
     categories = Category.query.all()
@@ -413,7 +413,7 @@ def popular_items():
 
 @app.route('/new_items')
 def new_items():
-    new_items = Product.query.order_by(Product.created_at.desc()).limit(5).all()
+    new_items = Product.query.order_by(Product.created_at.desc()).limit(4).all()
 
     categories = Category.query.all() 
 
