@@ -409,7 +409,7 @@ def orders():
 
 
 @app.route('/order/<int:order_id>')
-@admin_required
+@admin_required  
 def order_details(order_id):
     order = Order.query.get_or_404(order_id)
     order_items = OrderItem.query.filter_by(order_id=order_id).all()

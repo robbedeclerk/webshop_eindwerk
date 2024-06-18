@@ -14,6 +14,19 @@
             Not Complete
         {% endif %}
     </p>
+    <hr>
+    <h2>Delivery Address</h2>
+    <hr>
+    <p><strong>Country:</strong> {{ order.country }}</p>
+    <p><strong>Street:</strong> {{ order.street }}</p>
+    <p><strong>Postal Number:</strong> {{ order.postal_number }}</p>
+    <p><strong>House Number:</strong> {{ order.house_number }}</p>
+    {% if order.bus_number %}
+        <p><strong>Bus Number:</strong> {{ order.bus_number }}</p>
+    {% endif %}
+    
+    <hr>
+    
     <h2>Order Items</h2>
     <table class="table">
         <thead>
