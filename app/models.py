@@ -11,9 +11,9 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(256))
     country = db.Column(db.String(100))
     street = db.Column(db.String(100))
-    postal_number = db.Column(db.String(20))
-    house_number = db.Column(db.String(20))
-    bus_number = db.Column(db.String(20))
+    postal_number = db.Column(db.Integer) 
+    house_number = db.Column(db.Integer)   
+    bus_number = db.Column(db.Integer)     
     admin_rights = db.Column(db.Boolean, default=False)
 
     def __repr__(self):

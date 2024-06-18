@@ -41,13 +41,14 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please use a different email address.')
 
 class EditProfileForm(FlaskForm):
-    email = StringField('Email',validators=[DataRequired()], render_kw={'style': 'width: 400px'})
-    country = StringField('Country',validators=[DataRequired()], render_kw={'style': 'width: 400px'})
-    street = StringField('Street',validators=[DataRequired()], render_kw={'style': 'width: 400px'})
-    postal_number = IntegerField('Postal Number',validators=[DataRequired()], render_kw={'style': 'width: 400px'})
-    house_number = IntegerField('House Number',validators=[DataRequired()], render_kw={'style': 'width: 400px'})
+    email = StringField('Email', validators=[DataRequired()], render_kw={'style': 'width: 400px'})
+    country = StringField('Country', validators=[DataRequired()], render_kw={'style': 'width: 400px'})
+    street = StringField('Street', validators=[DataRequired()], render_kw={'style': 'width: 400px'})
+    postal_number = IntegerField('Postal Number', validators=[DataRequired()], render_kw={'style': 'width: 400px'})
+    house_number = IntegerField('House Number', validators=[DataRequired()], render_kw={'style': 'width: 400px'})
     bus_number = IntegerField('Bus Number', render_kw={'style': 'width: 400px'})
     submit = SubmitField('Submit')
+
 
     def __init__(self, *args, **kwargs):
         super(EditProfileForm, self).__init__(*args, **kwargs)

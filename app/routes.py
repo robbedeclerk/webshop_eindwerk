@@ -96,20 +96,30 @@ def profile():
     user_data=db.session.scalar(sa.select(User).where(User.username==username))
     return render_template('profile.html',user=user_data)
 
-@app.route('/edit_profile',methods=['GET','POST'])
+@app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    form = EditProfileForm(current_user.username)
+    form = EditProfileForm()  # Create an instance of your form class
+
     if form.validate_on_submit():
-        current_user.email = form.email.data
-        current_user.country = form.country.data
-        current_user.street = form.street.data
-        current_user.postal_number = form.postal_number.data
-        current_user.house_number = form.house_number.data
-        current_user.bus_number = form.bus_number.data
-        db.session.commit()  
-        flash('Your changes have been saved.')  
-        return redirect(url_for('index')) 
+        try:
+            current_user.email = form.email.data
+            current_user.country = form.country.data
+            current_user.street = form.street.data
+            current_user.postal_number = form.postal_number.data
+            current_user.house_number = form.house_number.data
+            current_user.bus_number = form.bus_number.data
+
+            db.session.commit()  # Commit changes to the database
+
+            flash('Your changes have been saved.')
+            return redirect(url_for('index'))
+        
+        except Exception as e:
+            db.session.rollback()  # Rollback changes on error
+            flash(f'Error saving changes: {str(e)}', 'error')
+            # Optionally, print or log the error for debugging
+            print(f'Error saving changes: {str(e)}')
 
     elif request.method == 'GET':
         form.email.data = current_user.email
