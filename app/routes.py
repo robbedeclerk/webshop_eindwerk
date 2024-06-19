@@ -21,19 +21,21 @@ def allowed_file(filename):
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+# function for admin required
 def admin_required(func):
     @wraps(func)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated or not current_user.admin_rights:
-            # Redirect to a suitable page when admin rights are required
             return redirect(url_for('error_page'))
         return func(*args, **kwargs)
     return decorated_function
 
+# load user function 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# the first page you wil come to if you are searching the website (/)
 @app.route('/')
 @app.route('/index')
 def index():
@@ -44,6 +46,7 @@ def index():
 if __name__=='__main__':
     app.run(debug=True)
 
+# everting for the login/profile and registration
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -99,7 +102,7 @@ def profile():
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    form = EditProfileForm()  # Create an instance of your form class
+    form = EditProfileForm() 
 
     if form.validate_on_submit():
         try:
@@ -110,15 +113,14 @@ def edit_profile():
             current_user.house_number = form.house_number.data
             current_user.bus_number = form.bus_number.data
 
-            db.session.commit()  # Commit changes to the database
+            db.session.commit() 
 
             flash('Your changes have been saved.')
             return redirect(url_for('index'))
         
         except Exception as e:
-            db.session.rollback()  # Rollback changes on error
+            db.session.rollback() 
             flash(f'Error saving changes: {str(e)}', 'error')
-            # Optionally, print or log the error for debugging
             print(f'Error saving changes: {str(e)}')
 
     elif request.method == 'GET':
@@ -146,6 +148,7 @@ def reset_password():
             flash('Old password is incorrect. Please try again.', 'error')
     return render_template('reset_password.html', form=form)
 
+#this is to manage the shop data you can add and delete categories and products
 @app.route('/manage_shop_data', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -210,13 +213,14 @@ def manage_shop_data():
                            product_form=product_form, category_form=category_form, 
                            categories=categories, products=products)
 
-
+#this is to display individual products
 @app.route('/product/<int:product_id>')
 def product(product_id):
     product = Product.query.get_or_404(product_id)
     form = AddToCartForm()
     return render_template('product.html', product=product, form=form)
 
+#this is to add items to the cart
 @app.route('/add_to_cart/<int:product_id>', methods=['GET', 'POST'])
 def add_to_cart(product_id):
     product = Product.query.get_or_404(product_id)
@@ -246,9 +250,7 @@ def add_to_cart(product_id):
 
     return redirect(url_for('product', product_id=product_id))
 
-
-
-
+#this is to everything for viewing/deleting items in the cart 
 @app.route('/cart')
 @login_required
 def view_cart():
@@ -288,7 +290,7 @@ def update_cart(cart_item_id):
     return redirect(url_for('view_cart'))
 
 
-
+#the checkout function
 @app.route('/checkout', methods=['GET'])
 @login_required
 def checkout():
@@ -297,11 +299,7 @@ def checkout():
     total_price_formatted = "{:.2f}".format(total_price)
     return render_template('checkout.html', cart_items=cart_items, total_price=total_price_formatted)
 
-
-
-
-from flask import request
-
+#the place order function
 @app.route('/place_order', methods=['POST'])
 @login_required
 def place_order():
@@ -310,21 +308,20 @@ def place_order():
         flash('Your cart is empty.', 'error')
         return redirect(url_for('index'))
     
-    # Controleer of alternatieve adresgegevens zijn ingevuld
     alt_country = request.form.get('alt_country')
     alt_street = request.form.get('alt_street')
     alt_postal_number = request.form.get('alt_postal_number')
     alt_house_number = request.form.get('alt_house_number')
     alt_bus_number = request.form.get('alt_bus_number')
     
-    # Gebruik standaardadresgegevens van de huidige gebruiker
+    # the address details than came from the current user that is logged in
     country = current_user.country
     street = current_user.street
     postal_number = current_user.postal_number
     house_number = current_user.house_number
     bus_number = current_user.bus_number
     
-    # Gebruik alternatieve adresgegevens als deze zijn ingevuld
+    # the alternative address details
     if alt_country:
         country = alt_country
     if alt_street:
@@ -338,7 +335,6 @@ def place_order():
     
     total_price = sum(item.product.price * item.quantity for item in cart_items)
     
-    # Create the order with address details
     order = Order(
         user_id=current_user.id,
         total_price=total_price,
@@ -349,20 +345,21 @@ def place_order():
         bus_number=bus_number
     )
     db.session.add(order)
-    db.session.commit()  # Commit to get the order id
+    db.session.commit()
     
-    # Create order items
     for item in cart_items:
         order_item = OrderItem(order_id=order.id, product_id=item.product.id, quantity=item.quantity)
         db.session.add(order_item)
-        db.session.delete(item)  # Remove the item from the cart
+        db.session.delete(item)
     
     db.session.commit()
     
     flash('Your order has been placed successfully!', 'success')
     return redirect(url_for('index'))
 
+#here would be the place to place the payment function 
 
+#the statistics function
 @app.route('/statistics')
 @admin_required
 def statistics():
@@ -378,6 +375,7 @@ def statistics():
 
     return render_template('statistics.html', products=product_stats)
 
+#here you can check all of your orders 
 @app.route('/orders', methods=['GET'])
 @admin_required
 def orders():
@@ -422,6 +420,8 @@ def toggle_order_status(order_id):
     db.session.commit()
     return redirect(url_for('order_details', order_id=order_id))
 
+#this is made so you can see the popular and new items 
+#popular items is the most ordered items
 @app.route('/popular_items')
 def popular_items():
     popular_items = db.session.query(Product, db.func.count(OrderItem.product_id).label('total_orders')) \
@@ -430,14 +430,15 @@ def popular_items():
                     .order_by(db.desc('total_orders')) \
                     .limit(4) \
                     .all()
-
+                    #you can change the limit if you want more or less items on the page
     categories = Category.query.all()
 
     return render_template('popular_items.html', popular_items=popular_items, categories=categories)
 
+#new items is checked  on the timestamp that the product is added on  in the database
 @app.route('/new_items')
 def new_items():
-    new_items = Product.query.order_by(Product.created_at.desc()).limit(4).all()
+    new_items = Product.query.order_by(Product.created_at.desc()).limit(4).all() #you can change the limit if you want more or less items on the page
 
     categories = Category.query.all() 
 

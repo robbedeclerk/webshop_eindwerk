@@ -24,7 +24,7 @@ class RegistrationForm(FlaskForm):
     street = StringField('Street', validators=[DataRequired()])
     postal_number = IntegerField('Postal Number', validators=[DataRequired()])
     house_number = IntegerField('House Number', validators=[DataRequired()])
-    bus_number = IntegerField('Bus Number', default='0')  # No validation required for bus number
+    bus_number = IntegerField('Bus Number', default='0')  
 
     submit = SubmitField('Register')
     
